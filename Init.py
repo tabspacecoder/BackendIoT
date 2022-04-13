@@ -49,6 +49,11 @@ def ImageProcessing(Client, Address):
     """
 
 
+def Analytics():
+    """UserID,EntryTime,ExitTime"""
+    pass
+
+
 def TCPPreprocessing(Client, Address):
     Data = Read(Client, Buffer)
     Size, Data = Data.split(Split, maxsplit=1)

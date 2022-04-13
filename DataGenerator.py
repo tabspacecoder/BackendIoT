@@ -20,3 +20,16 @@ def Request(Type=""):
         Type: ""
     }
     return json.dumps(Out)
+
+
+def Data(Image, Command: str, Year: int, Month: int, Date: int, Hour: int, Min: int):
+    Out = {
+        "Image": Image,
+        "Command": Command,
+        "Year": Year,
+        "Month": Month,
+        "Date": Date,
+        "Hour": Hour,
+        "Min": Min
+    }
+    return json.dumps(Out).encode()
