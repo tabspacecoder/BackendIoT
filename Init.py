@@ -1,11 +1,11 @@
 import json
-from DataGenerator import Response, Header
+from DataStore import InitDataset, GetTimely, YearlyReport, MonthlyReport, ClusteredMonthlyReport, DailyReport
+from DataGenerator import Response, Header, Type, Report
 
 from Core import Init
 
 IP = "192.168.1.6"
 Split = "-||-"
-Core = Init(IP)
 Buffer = 1024 * 64
 
 
@@ -23,7 +23,11 @@ def Parser(Strings):
 
 
 def RequestHandler(Request):
-    Out = Response(Header.Success, Request)
+    Out = Response(Header.Failure)
+    if Request["Type"] == Type.All:
+        Out = Response(Header.Success,
+                       Report(GetTimely(Df), DailyReport(Df), MonthlyReport(Df), YearlyReport(Df),
+                              ClusteredMonthlyReport(Df)))
     return Parser(Out)
 
 
@@ -49,11 +53,6 @@ def ImageProcessing(Client, Address):
     """
 
 
-def Analytics():
-    """UserID,EntryTime,ExitTime"""
-    pass
-
-
 def TCPPreprocessing(Client, Address):
     Data = Read(Client, Buffer)
     Size, Data = Data.split(Split, maxsplit=1)
@@ -71,6 +70,8 @@ async def WebRequestProcessing(WebSocket, Path):
     await Client.send(Out)
 
 
+Df = InitDataset()
+Core = Init(IP)
 Core.WebRequestProcessing = WebRequestProcessing
 Core.TCPRequestProcessing = TCPPreprocessing
 Core.TCPInputProcessing = ImageProcessing

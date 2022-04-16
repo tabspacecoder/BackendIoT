@@ -6,11 +6,28 @@ class Header:
     Failure = "Failure"
 
 
-def Response(header, Type="", Image=""):
+class Type:
+    All = "All"
+
+
+def Report(Timely, Daily, Monthly, Yearly, Clustered):
+    Data = {
+        "Time": Timely,
+        "Daily": Daily,
+        "Monthly": Monthly,
+        "Yearly": Yearly,
+        "Clustered": Clustered
+    }
+    return Data
+
+
+def Response(header, Type="", Values=None):
+    if Values is None:
+        Values = []
     Out = {
         "Header": header,
         "Type": Type,
-        "Image": Image
+        "Values": Values
     }
     return json.dumps(Out)
 
