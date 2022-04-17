@@ -8,6 +8,9 @@ class Header:
 
 class Type:
     All = "All"
+    SetType = "SetType"
+    Analytics = "Model1"
+    Intruder = "Model2"
 
 
 def Report(Timely, Daily, Monthly, Yearly, Clustered):
@@ -21,20 +24,21 @@ def Report(Timely, Daily, Monthly, Yearly, Clustered):
     return Data
 
 
-def Response(header, Type="", Values=None):
+def Response(header, ReqType="", Values=None):
     if Values is None:
         Values = []
     Out = {
         "Header": header,
-        "Type": Type,
+        "Type": ReqType,
         "Values": Values
     }
     return json.dumps(Out)
 
 
-def Request(Type=""):
+def Request(ReqType="", Other=""):
     Out = {
-        Type: ""
+        "Type": ReqType,
+        "Other": Other
     }
     return json.dumps(Out)
 

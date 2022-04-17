@@ -59,13 +59,14 @@ class Init:
         print("TCP incoming initializing")
         self._IncomingSocket = socket(AF_INET, SOCK_STREAM)
         self._IncomingSocket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
-        self._IncomingSocket.bind((self.__IP, self.__OutgoingTCPPort))
+        self._IncomingSocket.bind((self.__IP, self.__IncomingTCPPort))
         self._IncomingSocket.listen(self.__Devices)
         self.__Status = True
         print("TCP incoming initialized")
         while True:
             Client, Address = self._IncomingSocket.accept()
-            thread = Thread(target=self.TCPRequestProcessing, args=(Client, Address))
+            print(Address)
+            thread = Thread(target=self.TCPInputProcessing, args=(Client, Address))
             thread.Bind(self.__Thread)
             thread.start()
 

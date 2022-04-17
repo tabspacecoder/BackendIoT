@@ -104,8 +104,8 @@ def AddEndTime(Df: pd.DataFrame, Id: str, Year: int, Month: int, Date: int, E_Ho
     return False
 
 
-DF = InitDataset()
-
+# DF = InitDataset()
+#
 
 # for i in range(10):
 #     DF = AddRecord(DF, str(random.randint(1, 25)), random.randint(2019, 2020), random.randint(1, 12),
@@ -121,5 +121,5 @@ DF = InitDataset()
 # print(DailyReport(DF))
 
 # print(GetTimely(DF))
-
-print(AddEndTime(DF, 1, 2020, 10, 8, 5, 5))
+#
+# print(AddEndTime(DF, 1, 2020, 10, 8, 5, 5))

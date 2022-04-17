@@ -10,29 +10,29 @@ path = 'C:\\Users\\nikhi\\Downloads\\images'
 listing = os.listdir(path)
 known_face_encodings = []
 for file in listing:
-    img = face_recognition.load_image_file(path+'\\'+file)
-    img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
+    img = face_recognition.load_image_file(path + '\\' + file)
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     encodeimg = face_recognition.face_encodings(img)[0]
     known_face_encodings.append(encodeimg)
 
-#faceLoc = face_recognition.face_locations(imgelon)[0] #returns 4 vals
-#face_landmarks_list = face_recognition.face_landmarks(imgelon) #facial features
+# faceLoc = face_recognition.face_locations(imgelon)[0] #returns 4 vals
+# face_landmarks_list = face_recognition.face_landmarks(imgelon) #facial features
 
-#print(faceLoc)
-#print(face_landmarks_list)
+# print(faceLoc)
+# print(face_landmarks_list)
 
-#cv2.rectangle(imgelon,() )
+# cv2.rectangle(imgelon,() )
 
-#results = face_recognition.compare_faces([encodeElon], encodejane)
+# results = face_recognition.compare_faces([encodeElon], encodejane)
 
-#if results[0] == True:
+# if results[0] == True:
 #   print("Match!")
-#else:
+# else:
 #    print("Mis-Match!")
 
-#cv2.imshow('Elon Musk',imgelon)
-#cv2.imshow('Jane Doe',imgjane)
-#cv2.waitKey(0)
+# cv2.imshow('Elon Musk',imgelon)
+# cv2.imshow('Jane Doe',imgjane)
+# cv2.waitKey(0)
 
 ###########
 
@@ -51,8 +51,8 @@ current_listing = os.listdir(current_path)
 while 1:
     face_encodings = []
     for f in current_listing:
-        frame = face_recognition.load_image_file(current_path+'\\'+f)
-        img = cv2.cvtColor(frame,cv2.COLOR_BGR2RGB)
+        frame = face_recognition.load_image_file(current_path + '\\' + f)
+        img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         encodeimg = face_recognition.face_encodings(img)[0]
         face_encodings.append(encodeimg)
     face_names = []
@@ -64,8 +64,8 @@ while 1:
         if matches[best_match_index]:
             name = known_face_names[best_match_index]
         else:
-            shutil.copy(face_encoding,path)
-            os.rename(face_encoding, "Customer_"+i)
-            i+=1
+            shutil.copy(face_encoding, path)
+            os.rename(face_encoding, "Customer_" + i)
+            i += 1
         print(name)
         face_names.append(name)

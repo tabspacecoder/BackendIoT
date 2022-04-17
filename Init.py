@@ -1,12 +1,21 @@
 import json
 from DataStore import InitDataset, GetTimely, YearlyReport, MonthlyReport, ClusteredMonthlyReport, DailyReport
 from DataGenerator import Response, Header, Type, Report
-
+import numpy as np
 from Core import Init
+import matplotlib.pyplot as plt
 
-IP = "192.168.1.6"
+IP = "0.0.0.0"
 Split = "-||-"
 Buffer = 1024 * 64
+
+
+class Mode:
+    Analytics = "Model1"
+    Intruder = "Model2"
+
+
+CurrMode = Mode.Analytics
 
 
 class WebSocketHandler:
@@ -23,11 +32,14 @@ def Parser(Strings):
 
 
 def RequestHandler(Request):
+    global CurrMode
     Out = Response(Header.Failure)
     if Request["Type"] == Type.All:
         Out = Response(Header.Success,
                        Report(GetTimely(Df), DailyReport(Df), MonthlyReport(Df), YearlyReport(Df),
                               ClusteredMonthlyReport(Df)))
+    elif Request["Type"] == Type.SetType:
+        CurrMode = Request["Other"]
     return Parser(Out)
 
 
@@ -42,15 +54,20 @@ def Read(Client, BufferSize):
             Size, Buffer = Buffer.split(Split, maxsplit=1)
             Size = int(Size)
         if Size - len(Buffer) <= 0:
-            return Buffer.decode()
-    return Buffer.decode()
+            return Buffer
+    return Buffer
 
 
 def ImageProcessing(Client, Address):
-    Image = Read(Client, Buffer)
-    """
-    Write the Image processing here
-    """
+    while True:
+        Image = Read(Client, Buffer)
+        Image = json.loads(Image)
+        print(Image["Year"], Image["Month"], Image["Date"], Image["Hour"], Image["Min"])
+        Img = np.array(Image["Image"])
+        """
+        Use the Image Here
+        """
+        Client.send(Parser(CurrMode))
 
 
 def TCPPreprocessing(Client, Address):

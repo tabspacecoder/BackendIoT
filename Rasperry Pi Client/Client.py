@@ -1,8 +1,15 @@
 from socket import *
 import json
+# from picamera import PiCamera
+from datetime import datetime
+import matplotlib.pyplot as plt
 
 
-def Data(Image, Command: str, Year: int, Month: int, Date: int, Hour: int, Min: int):
+def Parser(Strings):
+    return f"{len(Strings)}{Split}{Strings}".encode()
+
+
+def Data(Image, Command, Year, Month, Date, Hour, Min):
     Out = {
         "Image": Image,
         "Command": Command,
@@ -32,11 +39,10 @@ def Read(Client, BufferSize):
 
 Main = socket()
 
-IP = "192.168.1.6"
+IP = "192.168.111.40"
 Split = "-||-"
 Port = 24682
 Buffer = 1024 * 64
-
 
 Break = "Break"
 
@@ -48,14 +54,23 @@ AnalyticsMode = True
 # Main part
 
 Main.connect((IP, Port))
+# camera = PiCamera()
+#
+# camera.resolution = (1280, 720)
+# camera.vflip = True
+# camera.contrast = 10
 
 while True:
     Command = Read(Main, Buffer)
     if AnalyticsMode:
-        Main.send(Data("", "", 0, 0, 0, 0, 0))
-        "Analytics part here"
+        # file_name = "/home/pi/Pictures/img_" + datetime.now().strftime("%d/%m/%Y %H:%M:%S") + ".jpg"
+        # camera.capture(file_name)
+        # Img = plt.imread(file_name)
+        Time = datetime.now()
+        Img = ""
+        Main.send(Parser(Data(Img, "", Time.year, Time.month, Time.day, Time.hour, Time.minute)))
     else:
-        Main.send(Data("", "", 0, 0, 0, 0, 0))
+        Main.send(Parser(Data("", "", 0, 0, 0, 0, 0)))
         "Motion Detection part here"
     if Command == Mode1:
         AnalyticsMode = True
