@@ -86,11 +86,13 @@ def AddRecord(Df: pd.DataFrame, Id: str, Year: int, Month: int, Date: int, Hour:
         "E_Min": [E_Min]
     }
     Tmp = pd.DataFrame(Data)
-    return Df.append(Tmp, ignore_index=True)
+    Df = Df.append(Tmp, ignore_index=True)
+    Save(Df)
+    return Df
 
 
 def Save(Df: pd.DataFrame):
-    Df.to_csv("Data.csv")
+    Df.to_csv("Data.csv", index=False)
 
 
 def AddEndTime(Df: pd.DataFrame, Id: str, Year: int, Month: int, Date: int, E_Hour: int, E_Min: int):
@@ -100,9 +102,8 @@ def AddEndTime(Df: pd.DataFrame, Id: str, Year: int, Month: int, Date: int, E_Ho
         Df.loc[(Df["Id"] == Id) & (Df["Year"] == Year) & (Df["Month"] == Month) & (Df["Date"] == Date),
                ["E_Hour", "E_Min"]] = [E_Hour, E_Min]
         Save(Df)
-        return True
-    return False
-
+        return Df
+    return None
 
 # DF = InitDataset()
 #

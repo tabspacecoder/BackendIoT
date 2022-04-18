@@ -1,12 +1,10 @@
 from socket import *
 import json
-# from picamera import PiCamera
+
+import numpy as np
+from picamera import PiCamera
 from datetime import datetime
 import matplotlib.pyplot as plt
-
-
-def Parser(Strings):
-    return f"{len(Strings)}{Split}{Strings}".encode()
 
 
 def Data(Image, Command, Year, Month, Date, Hour, Min):
@@ -19,7 +17,7 @@ def Data(Image, Command, Year, Month, Date, Hour, Min):
         "Hour": Hour,
         "Min": Min
     }
-    return json.dumps(Out).encode()
+    return json.dumps(Out)
 
 
 def Read(Client, BufferSize):
@@ -33,8 +31,8 @@ def Read(Client, BufferSize):
             Size, BufferData = BufferData.split(Split, maxsplit=1)
             Size = int(Size)
         if Size - len(BufferData) <= 0:
-            return BufferData.decode()
-    return BufferData.decode()
+            return BufferData
+    return BufferData
 
 
 Main = socket()
@@ -50,28 +48,62 @@ Mode1 = "Mode1"
 Mode2 = "Mode2"
 
 AnalyticsMode = True
+CameraUsage = False
 
 # Main part
 
 Main.connect((IP, Port))
-# camera = PiCamera()
-#
-# camera.resolution = (1280, 720)
-# camera.vflip = True
-# camera.contrast = 10
+camera = PiCamera()
+
+camera.resolution = (250, 250)
+camera.framerate = 30
+
+
+class CameraOut:
+    def __init__(self):
+        self.size = 0
+
+    def write(self, s):
+        self.size += len(s)
+        print(s)
+
+    def flush(self):
+        print('%d bytes would have been written' % self.size)
+
+
+def Parser(String):
+    return f"{len(String)}{Split}{String}".encode()
+
+
+CameraObj = CameraOut()
+
+
+def InitCamera():
+    global CameraUsage
+    if not CameraUsage:
+        camera.start_recording(CameraObj)
+        CameraUsage = True
+
+
+def CloseCamera():
+    global CameraUsage
+    if CameraUsage:
+        camera.stop_recording()
+        CameraUsage = False
+
 
 while True:
-    Command = Read(Main, Buffer)
     if AnalyticsMode:
-        # file_name = "/home/pi/Pictures/img_" + datetime.now().strftime("%d/%m/%Y %H:%M:%S") + ".jpg"
-        # camera.capture(file_name)
-        # Img = plt.imread(file_name)
+        InitCamera()
+        Img = np.zeros((100, 100, 3))
         Time = datetime.now()
-        Img = ""
-        Main.send(Parser(Data(Img, "", Time.year, Time.month, Time.day, Time.hour, Time.minute)))
+        Main.send(Parser(Data(Img.tolist(), "", Time.year, Time.month, Time.day, Time.hour, Time.minute)))
     else:
-        Main.send(Parser(Data("", "", 0, 0, 0, 0, 0)))
+        CloseCamera()
+        Main.send(Data("", "", 0, 0, 0, 0, 0))
         "Motion Detection part here"
+    Command = Read(Main, Buffer)
+    print(Command)
     if Command == Mode1:
         AnalyticsMode = True
     elif Command == Mode2:
