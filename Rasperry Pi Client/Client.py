@@ -3,6 +3,12 @@ import json
 from picamera import PiCamera
 from datetime import datetime
 import matplotlib.pyplot as plt
+import RPi.GPIO as GPIO
+import time
+
+GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BOARD)
+GPIO.setup(11, GPIO.IN)
 
 
 def Data(Image, Command, Year, Month, Date, Hour, Min):
@@ -74,8 +80,12 @@ while True:
         Time = datetime.now()
         Main.send(Parser(Data(Img.tolist(), "", Time.year, Time.month, Time.day, Time.hour, Time.minute)))
     else:
-        Main.send(Data("", "", 0, 0, 0, 0, 0))
-        "Motion Detection part here"
+        Time = datetime.now()
+        i = GPIO.input(11)
+        if i == 0:
+            Main.send(Parser(Data("", "", Time.year, Time.month, Time.day, Time.hour, Time.minute)))
+        elif i == 1:
+            Main.send(Parser(Data("", "Detected", Time.year, Time.month, Time.day, Time.hour, Time.minute)))
     Command = Read(Main, Buffer)
     print(Command)
     if Command == Mode1:

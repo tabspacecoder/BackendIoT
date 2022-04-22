@@ -73,7 +73,7 @@ def GetTimely(Df: pd.DataFrame):
     return Data
 
 
-def AddRecord(Df: pd.DataFrame, Id: str, Year: int, Month: int, Date: int, Hour: int, Min: int, E_Hour: int,
+def AddRecord(Df: pd.DataFrame, Id: int, Year: int, Month: int, Date: int, Hour: int, Min: int, E_Hour: int,
               E_Min: int):
     Data = {
         "Id": [Id],
@@ -95,7 +95,7 @@ def Save(Df: pd.DataFrame):
     Df.to_csv("Data.csv", index=False)
 
 
-def AddEndTime(Df: pd.DataFrame, Id: str, Year: int, Month: int, Date: int, E_Hour: int, E_Min: int):
+def AddEndTime(Df: pd.DataFrame, Id: int, Year: int, Month: int, Date: int, E_Hour: int, E_Min: int):
     Tmp = Df.where((Df["Id"] == Id) & (Df["Year"] == Year) & (Df["Month"] == Month) & (Df["Date"] == Date))
     Tmp = Tmp.dropna()
     if len(Tmp) != 0:
@@ -104,23 +104,24 @@ def AddEndTime(Df: pd.DataFrame, Id: str, Year: int, Month: int, Date: int, E_Ho
         Save(Df)
         return Df
     return None
-
+#
 # DF = InitDataset()
 #
-
-# for i in range(10):
-#     DF = AddRecord(DF, str(random.randint(1, 25)), random.randint(2019, 2020), random.randint(1, 12),
-#                    random.randint(1, 30),
-#                    5,
-#                    random.randint(0, 59), 6, random.randint(0, 59))
+# #
+# # for i in range(10):
+# #     DF = AddRecord(DF, str(random.randint(1, 25)), random.randint(2019, 2020), random.randint(1, 12),
+# #                    random.randint(1, 30),
+# #                    5,
+# #                    random.randint(0, 59), 6, random.randint(0, 59))
 #
-# DF.to_csv("Data.csv")
-
+# # DF.to_csv("Data.csv")
+# # for i in DF.groupby(["Date"]):
+# #     print(DF.groupby(["Date"])["Id"])
 # print(ClusteredMonthlyReport(DF))
 # print(MonthlyReport(DF))
 # print(YearlyReport(DF))
 # print(DailyReport(DF))
-
+#
 # print(GetTimely(DF))
 #
-# print(AddEndTime(DF, 1, 2020, 10, 8, 5, 5))
+# print(AddEndTime(DF, "1", 2020, 10, 8, 5, 5))
