@@ -13,6 +13,7 @@ GPIO.setup(11, GPIO.IN)
 
 def Data(Image, Command, Year, Month, Date, Hour, Min):
     Out = {
+        "CameraID": 2,
         "Image": Image,
         "Command": Command,
         "Year": Year,
@@ -47,7 +48,7 @@ Port = 24682
 Buffer = 1024 * 64
 
 Break = "Break"
-
+StopStream = "Stop"
 Mode1 = "Mode1"
 Mode2 = "Mode2"
 
@@ -83,7 +84,7 @@ while True:
         Time = datetime.now()
         i = GPIO.input(11)
         if i == 0:
-            Main.send(Parser(Data("", "", Time.year, Time.month, Time.day, Time.hour, Time.minute)))
+            Main.send(Parser(Data("", "Nope", Time.year, Time.month, Time.day, Time.hour, Time.minute)))
         elif i == 1:
             Main.send(Parser(Data("", "Detected", Time.year, Time.month, Time.day, Time.hour, Time.minute)))
     Command = Read(Main, Buffer)
@@ -94,6 +95,8 @@ while True:
         AnalyticsMode = False
     elif Command == Break:
         break
+    elif Command == StopStream:
+        pass
     else:
         pass
 

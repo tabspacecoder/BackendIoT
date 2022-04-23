@@ -1,17 +1,13 @@
 import json
 import re
-
-from DataStore import InitDataset, GetTimely, YearlyReport, MonthlyReport, ClusteredMonthlyReport, DailyReport
 from DataGenerator import Response, Header, Type, Report
 import numpy as np
 from Core import Init
 import matplotlib.pyplot as plt
-import requests
 import cv2
 import face_recognition
-from DataStore import *
+from Queries import *
 import os
-import shutil
 import requests
 
 
@@ -26,7 +22,6 @@ def telegram_notifications(msg):
 
 
 IP = "0.0.0.0"
-Df = InitDataset()
 Split = "-||-"
 Buffer = 1024 * 64
 
@@ -57,8 +52,8 @@ def RequestHandler(Request):
     Out = Response(Header.Failure)
     if Request["Type"] == Type.All:
         Out = Response(Header.Success,
-                       Report(GetTimely(Df), DailyReport(Df), MonthlyReport(Df), YearlyReport(Df),
-                              ClusteredMonthlyReport(Df)))
+                       Report(GetByTimelyReport(Df), GetByDailyReport(Df), GetByWeeklyReport(Df),
+                              GetByMonthlyReport(Df), GetByYearlyReport(C)))
     elif Request["Type"] == Type.SetType:
         CurrMode = Request["Other"]
 
@@ -94,9 +89,8 @@ def ImageProcessing(Client, Address):
                 pass
         else:
             Img = np.array(Image["Image"])
-
             Img = np.array(Img, dtype="uint8")
-            Img = cv2.rotate(Img,cv2.ROTATE_180)
+            Img = cv2.rotate(Img, cv2.ROTATE_180)
             plt.imshow(Img)
             plt.show()
             encodeimg_current = face_recognition.face_encodings(Img)
@@ -150,13 +144,10 @@ def ImageProcessing(Client, Address):
                     name = known_face_names[best_match_index_1]
                     print(name)
                     Nam = int(re.search(r'\d+', name).group())
-                    Out = AddEndTime(Df, Nam, Image["Year"], Image["Month"], Image["Date"], Image["Hour"], Image["Min"])
-                    if Out is None:
-                        Df = AddRecord(Df, Nam, Image["Year"], Image["Month"], Image["Date"], Image["Hour"], Image["Min"],
-                                       Image["Hour"], Image["Min"])
+                    if Image["CameraID"] == 1:
+                        ExitStamp(Df, Nam)
                     else:
-                        Df = Out
-                    Save(Df)
+                        EntryStamp(Df, Nam)
                 else:
                     print(known_face_names)
                     cv2.imwrite(path + "\\" + "Customer_" + str(i) + ".jpg", Img)
@@ -186,6 +177,7 @@ async def WebRequestProcessing(WebSocket, Path):
 
 
 Core = Init(IP)
+Df = InitTable(Core)
 Core.WebRequestProcessing = WebRequestProcessing
 Core.TCPRequestProcessing = TCPPreprocessing
 Core.TCPInputProcessing = ImageProcessing

@@ -1,7 +1,14 @@
 from socket import *
 from Thread import Thread
+import mysql.connector
 import asyncio
 import websockets
+
+
+DatabaseUser = "root"
+DatabasePassword = "rootcore@123"
+DatabaseHost = "127.0.0.1"
+DatabasePort = 3306
 
 
 def Pass(Client, Address):
@@ -11,6 +18,8 @@ def Pass(Client, Address):
 class Init:
     def __init__(self, HostIP: str, OutgoingWebPort: int = 13579, OutgoingTCPPort: int = 24680,
                  IncomingTCPPort: int = 24682, Devices: int = 100, Buffer: int = 1024 * 64):
+        self.Cursor = None
+        self.Database = None
         self.__IncomingTCPThread = None
         self.__OutgoingTCPThread = None
 
@@ -33,6 +42,7 @@ class Init:
 
         self.__BindThread = None
         self.__WebSocket = None
+        self.__InitDatabase()
 
     def Start(self):
         self.__IncomingTCPThread = Thread(target=self.__InitIncomingTCP)
@@ -40,6 +50,13 @@ class Init:
         self.__OutgoingTCPThread = Thread(target=self.__InitOutgoingTCP)
         self.__OutgoingTCPThread.start()
         self.__InitOutgoingWebSocket()
+
+    def __InitDatabase(self):
+        print("Initializing database")
+        self.Database = mysql.connector.connect(host=DatabaseHost, user=DatabaseUser, password=DatabasePassword,
+                                                port=DatabasePort, database="LibraryManagement")
+        self.Cursor = self.Database.cursor(buffered=True)
+        print("Database initialized")
 
     def __InitOutgoingTCP(self):
         print("TCP outgoing initializing")
