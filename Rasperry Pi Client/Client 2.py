@@ -74,19 +74,11 @@ def Parser(String):
 
 
 while True:
-    if AnalyticsMode:
-        file_name = "/home/pi/Pictures/img_tmp" + ".jpg"
-        camera.capture(file_name)
-        Img = plt.imread(file_name)
-        Time = datetime.now()
-        Main.send(Parser(Data(Img.tolist(), "", Time.year, Time.month, Time.day, Time.hour, Time.minute)))
-    else:
-        Time = datetime.now()
-        i = GPIO.input(11)
-        if i == 0:
-            Main.send(Parser(Data("", "Nope", Time.year, Time.month, Time.day, Time.hour, Time.minute)))
-        elif i == 1:
-            Main.send(Parser(Data("", "Detected", Time.year, Time.month, Time.day, Time.hour, Time.minute)))
+    file_name = "/home/pi/Pictures/img_tmp" + ".jpg"
+    camera.capture(file_name)
+    Img = plt.imread(file_name)
+    Time = datetime.now()
+    Main.send(Parser(Data(Img.tolist(), "", Time.year, Time.month, Time.day, Time.hour, Time.minute)))
     Command = Read(Main, Buffer)
     print(Command)
     if Command == Mode1:

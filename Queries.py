@@ -116,32 +116,32 @@ def GetByYearlyReport(Core):
     return Out
 
 
-DatabaseUser = "root"
-DatabasePassword = "rootcore@123"
-DatabaseHost = "127.0.0.1"
-DatabasePort = 3306
-
-
-class Base:
-    def __init__(self):
-        self.__InitDatabase()
-
-    def __InitDatabase(self):
-        print("Initializing database")
-        self.Database = mysql.connector.connect(host=DatabaseHost, user=DatabaseUser, password=DatabasePassword,
-                                                port=DatabasePort, database="DataManagement")
-        self.Cursor = self.Database.cursor(buffered=True)
-        print("Database initialized")
-
-
-C = Base()
-InitTable(C)
-
-# for i in range(20):
-#     EntryStamp(C, random.randint(1, 10))
-#     print(i, "Where done")
-#     time.sleep(random.randint(1, 10))
-
-print(GetByMonthlyReport(C))
-print(GetByYearlyReport(C))
-print(GetByWeeklyReport(C))
+# DatabaseUser = "root"
+# DatabasePassword = "rootcore@123"
+# DatabaseHost = "127.0.0.1"
+# DatabasePort = 3306
+#
+#
+# class Base:
+#     def __init__(self):
+#         self.__InitDatabase()
+#
+#     def __InitDatabase(self):
+#         print("Initializing database")
+#         self.Database = mysql.connector.connect(host=DatabaseHost, user=DatabaseUser, password=DatabasePassword,
+#                                                 port=DatabasePort, database="DataManagement")
+#         self.Cursor = self.Database.cursor(buffered=True)
+#         print("Database initialized")
+#
+#
+# C = Base()
+# InitTable(C)
+#
+# # for i in range(20):
+# #     EntryStamp(C, random.randint(1, 10))
+# #     print(i, "Where done")
+# #     time.sleep(random.randint(1, 10))
+#
+# print(GetByMonthlyReport(C))
+# print(GetByYearlyReport(C))
+# print(GetByWeeklyReport(C))
