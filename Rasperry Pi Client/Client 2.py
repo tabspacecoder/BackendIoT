@@ -42,7 +42,7 @@ def Read(Client, BufferSize):
 
 Main = socket()
 
-IP = "192.168.111.40"
+IP = "192.168.60.40"
 Split = "-||-"
 Port = 24682
 Buffer = 1024 * 64

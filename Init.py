@@ -1,5 +1,4 @@
 import json
-import re
 from DataGenerator import Response, Header, Type, Report
 import numpy as np
 from Core import Init
@@ -11,12 +10,19 @@ import os
 import requests
 
 
+def Clean(Msg: str):
+    seq = [".", "-"]
+    for i in seq:
+        Msg = Msg.replace(i, "\\" + i)
+    return Msg
+
+
 def telegram_notifications(msg):
     bot_token = '5347296207:AAHwOXopPpxUPkHElRhVSI_owg2R-xkXPfc'
     bot_chatID = '1190099465'
     send_text = "https://api.telegram.org/bot" + bot_token + "/sendMessage?chat_id=" + bot_chatID + \
-                "&parse_mode=MarkdownV2&text=" + msg + " is entering the shop." + " To monitor, follow the link" + \
-                "http://youtube.com/channel/UCe9z1mihw-RBSV3RuXxO0lg/live"
+                "&parse_mode=MarkdownV2&text=" + msg + " has entered the shop Please follow the link to monitor " + Clean(
+        "http://youtube.com/channel/UCe9z1mihw-RBSV3RuXxO0lg/live")
     response = requests.get(send_text)
     return response.json()
 
@@ -55,7 +61,7 @@ def RequestHandler(Request):
     if Request["Type"] == Type.All:
         Out = Response(Header.Success,
                        Report(GetByTimelyReport(Core), GetByDailyReport(Core), GetByWeeklyReport(Core),
-                              GetByMonthlyReport(Core), GetByYearlyReport(Core)))
+                              GetByMonthlyReport(Core), GetByYearlyReport(Core),GetInsideCount(Core)))
     elif Request["Type"] == Type.SetType:
         CurrMode = Request["Other"]
 
@@ -77,18 +83,20 @@ def Read(Client, BufferSize):
     return Buffer
 
 
-def ImageProcessing(Client, Address):
-    known_face_names = [
-        "Customer_1",
-        "Customer_2",
-        "Customer_3",
-        "Customer_4",
-    ]
+known_face_names = [
+    "CCHB101",
+    "CCHB102",
+    "CCHB103",
+    "CCHB104",
+]
 
-    criminal_face_names = [
-        "Criminal_1",
-        "Criminal_2",
-    ]
+criminal_face_names = [
+    "Cid1",
+    "Cid2",
+]
+
+
+def ImageProcessing(Client, Address):
     while True:
         Image = Read(Client, Buffer)
         Client.send(Parser(CurrMode))
@@ -105,6 +113,7 @@ def ImageProcessing(Client, Address):
             Img = cv2.rotate(Img, cv2.ROTATE_180)
             plt.imshow(Img)
             plt.show()
+
             encodeimg_current = face_recognition.face_encodings(Img)
             if len(encodeimg_current) > 0:
                 encodeimg_current = encodeimg_current[0]
@@ -129,23 +138,21 @@ def ImageProcessing(Client, Address):
                     if len(encodeimg) > 0:
                         criminal_face_encodings.append(encodeimg)
 
-
                 i = 5
                 matches = face_recognition.compare_faces(known_face_encodings, encodeimg_current)
                 criminal_matches = face_recognition.compare_faces(criminal_face_encodings, encodeimg_current)
-                name = "unknown"
                 face_distances = face_recognition.face_distance(known_face_encodings, encodeimg_current)
                 criminal_face_distances = face_recognition.face_distance(criminal_face_encodings, encodeimg_current)
                 best_match_index_1 = np.argmin(face_distances)
                 best_match_index_2 = np.argmin(criminal_face_distances)
                 if matches[best_match_index_1]:
                     name = known_face_names[best_match_index_1]
+                    print(name)
                 else:
                     cv2.imwrite(path + "\\" + "C" + str(i) + ".jpg", Img)
                     known_face_names.append("Customer_" + str(i))
                     i += 1
-                Nam = int(best_match_index_1+1)
-                print(Core)
+                Nam = int(best_match_index_1 + 1)
                 if Image["CameraID"] == 2:
                     ExitStamp(Core, Nam)
                 elif Image["CameraID"] == 1:
@@ -154,7 +161,6 @@ def ImageProcessing(Client, Address):
                     criminal_name = criminal_face_names[best_match_index_2]
                     print("Criminal entering")
                     telegram_notifications(criminal_name)
-
 
 def TCPPreprocessing(Client, Address):
     Data = Read(Client, Buffer)

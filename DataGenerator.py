@@ -13,13 +13,14 @@ class Type:
     Intruder = "Model2"
 
 
-def Report(Timely, Daily, Weekly, Monthly, Yearly):
+def Report(Timely, Daily, Weekly, Monthly, Yearly, Inside):
     Data = {
         "Timely": Timely,
         "Daily": Daily,
         "Weekly": Weekly,
         "Monthly": Monthly,
-        "Yearly": Yearly
+        "Yearly": Yearly,
+        "Inside": Inside
     }
     return Data
 

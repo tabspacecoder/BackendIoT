@@ -6,18 +6,20 @@ import shutil
 import requests
 
 
+def Clean(Msg: str):
+    seq = [".", "-"]
+    for i in seq:
+        Msg = Msg.replace(i, "\\" + i)
+    return Msg
+
+
 def telegram_notifications(msg):
     bot_token = '5347296207:AAHwOXopPpxUPkHElRhVSI_owg2R-xkXPfc'
     bot_chatID = '1190099465'
-    headers_ = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"}
-    send_text = "https://api.telegram.org/bot" + bot_token + "/sendMessage?chat_id=" + bot_chatID + "&parse_mode=MarkdownV2&text=" + "ALERT!!" + msg + " is entering the shop"
+    send_text = "https://api.telegram.org/bot" + bot_token + "/sendMessage?chat_id=" + bot_chatID + \
+                "&parse_mode=MarkdownV2&text=" + msg + " has entered the shop Please follow the link to monitor " + Clean(
+        "http://youtube.com/channel/UCe9z1mihw-RBSV3RuXxO0lg/live")
     response = requests.get(send_text)
-    # response = requests.get(f"https://api.telegram.org/bot5347296207:AAHwOXopPpxUPkHElRhVSI_owg2R-xkXPfc
-    # /sendMessage?chat_id=?{bot_chatID}&parse_mode=MarkdownV2&text=ALERT!!?{msg}is entering the shop",
-    # headers=headers_)
-    print(response)
-    print(response.json)
     return response.json()
 
 
@@ -42,17 +44,15 @@ for file in criminal_listing:
     criminal_face_encodings.append(encodeimg)
 
 known_face_names = [
-    "Customer_1",
-    "Customer_2",
-    "Customer_3",
-    "Customer_4",
+    "CCHB101",
+    "CCHB102",
+    "CCHB103",
+    "CCHB104",
 ]
 
 criminal_face_names = [
-    "Criminal_1",
-    "Criminal_2",
-    "Criminal_3",
-    "Criminal_4",
+    "Cid1",
+    "Cid2",
 ]
 
 i = 5
@@ -85,7 +85,6 @@ for face_encoding in face_encodings:
     if criminal_matches[best_match_index_2]:
         criminal_name = criminal_face_names[best_match_index_2]
         print("Criminal entering")
-        telegram_notifications(criminal_name)
-face_names.append(name)
-print(name)
-print(criminal_name)
+        print(telegram_notifications(criminal_name))
+    print(name)
+    print(criminal_name)
