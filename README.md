@@ -1,4 +1,4 @@
-# Smart Video Analytics
+# Smart Customer Analytics
 This is the Backend for the project.
 
 ## <a href="https://github.com/tabspacecoder/iot_dashboard">Frontend</a>
